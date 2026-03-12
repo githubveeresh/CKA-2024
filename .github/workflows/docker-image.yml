@@ -22,14 +22,3 @@ jobs:
             Write-Host "Hello from PowerShell on Linux!"
             $date = Get-Date
             Write-Host "The current time is $date"
-
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: my-image-name:latest
-          args: --file=Dockerfile
-
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
