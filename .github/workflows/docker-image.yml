@@ -7,16 +7,29 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Snyk
-      uses: snyk/actions@v1.0.0
-        
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Run PowerShell script
+        uses: Amadevus/pwsh-script@v2.0.3
+        with:
+          # Your script goes here. Example:
+          script: |
+            Write-Host "Hello from PowerShell on Linux!"
+            $date = Get-Date
+            Write-Host "The current time is $date"
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: my-image-name:latest
+          args: --file=Dockerfile
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
